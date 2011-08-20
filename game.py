@@ -1,6 +1,7 @@
 import pygame
 import maps
 pygame.init()
+pygame.mixer.init()
 
 size = 640, 480
 clock = pygame.time.Clock()
@@ -8,7 +9,9 @@ clock = pygame.time.Clock()
 wall = pygame.image.load("wall.png")
 floor = pygame.image.load("floor.png")
 
-screen = pygame.display.set_mode(size)
+screen = pygame.display.set_mode(size,pygame.FULLSCREEN)
+
+bump = pygame.mixer.Sound("bump.wav")
 
 pwalkfront = pygame.image.load("player_front.png")
 pwalkright = pygame.image.load("player_right.png")
@@ -31,9 +34,11 @@ class Player:
         elif event.key == pygame.K_RIGHT: potx = 1;  self.image = pwalkright
         elif event.key == pygame.K_UP:    poty = -1; self.image = pwalkback
         elif event.key == pygame.K_DOWN:  poty = 1;  self.image = pwalkfront
-        
+
         if self.location[self.posy + poty][self.posx + potx] != 1:
             self.posx += potx; self.posy += poty
+        else:
+            bump.play()
     
 frogman = Player(5,5)
 gamequit = 0
@@ -59,6 +64,8 @@ def getinput():
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_ESCAPE: pygame.quit(); gamequit = 1
 
+pygame.mixer.music.load("title.wav")
+pygame.mixer.music.play(-1)
 while not gamequit:
     clock.tick(30)
     getinput()
