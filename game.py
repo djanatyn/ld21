@@ -2,6 +2,7 @@ import pygame
 import maps
 pygame.init()
 pygame.mixer.init()
+pygame.font.init()
 
 size = 640, 480
 clock = pygame.time.Clock()
@@ -10,10 +11,12 @@ wall = pygame.image.load("wall.png")
 floor = pygame.image.load("floor.png")
 coin = pygame.image.load("coin.png")
 
-screen = pygame.display.set_mode(size,pygame.FULLSCREEN)
+screen = pygame.display.set_mode(size)
 
 bump = pygame.mixer.Sound("bump.wav")
 ping = pygame.mixer.Sound("coin.wav")
+
+score = pygame.font.Font("terminus.ttf",14)
 
 pwalkfront = pygame.image.load("player_front.png")
 pwalkright = pygame.image.load("player_right.png")
@@ -33,6 +36,7 @@ class Player:
         if self.location[self.posy][self.posx] == 2:
             ping.play()
             self.location[self.posy][self.posx] = 0
+            self.coin += 1
         screen.blit(self.image,self.position)
     def run(self,event):
         potx = 0; poty = 0
@@ -72,6 +76,10 @@ def getinput():
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_ESCAPE: pygame.quit(); gamequit = 1
 
+def scoreboard():
+    text = score.render("coins: %s" % (frogman.coin),0,(0,0,0))
+    screen.blit(text,(280,80))
+
 pygame.mixer.music.load("room1.wav")
 pygame.mixer.music.play(-1)
 while not gamequit:
@@ -79,4 +87,5 @@ while not gamequit:
     getinput()
     showmap(frogman.location)
     frogman.update()
+    scoreboard()
     pygame.display.flip()
