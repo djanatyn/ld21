@@ -29,7 +29,7 @@ class Player:
         self.posy = posy
         self.position = [posx * 40, posy * 40]
         self.image = pwalkfront
-        self.location = maps.testmap
+        self.location = maps.list[0]
         self.coin = 0
     def update(self):
         self.position = [self.posx * 40, self.posy * 40]
@@ -39,7 +39,9 @@ class Player:
             self.coin += 1
         if self.location.array[self.posy][self.posx] > 2:
             newmap = self.location.array[self.posy][self.posx]
-            
+            self.posx, self.posy = self.location.exits[newmap][1]
+            mapnum = self.location.exits[newmap][0]
+            self.location = maps.list[mapnum]
         screen.blit(self.image,self.position)
     def run(self,event):
         potx = 0; poty = 0
