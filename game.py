@@ -26,6 +26,8 @@ pwalkright = pygame.image.load("player_right.png")
 pwalkback = pygame.image.load("player_back.png")
 pwalkleft = pygame.image.load("player_left.png")
 
+enemy = pygame.image.load("robot.png")
+
 class Player:
     def __init__(self,posx,posy):
         self.posx = posx
@@ -65,8 +67,29 @@ class Player:
                 self.posx += potx; self.posy += poty
             else:
                 bump.play()
+class Enemy:
+    def __init__(self,posx,posy):
+        self.posx = posx
+        self.posy = posy
+        self.position = [posx * 30, posy * 30]
+        self.time = 0
+    def move(self):
+        if self.time > 250:
+            self.time = 0; potx = 0; poty = 0
+            if frogman.posx > self.posx: potx = 1
+            if frogman.posx < self.posx: potx = -1
+            if frogman.posy > self.posy: poty = 1
+            if frogman.posy < self.posy: poty = -1
+            if frogman.location.array[self.posy + poty][self.posx] != 1:
+                self.posy += poty
+            if frogman.location.array[self.posy][self.posx + potx] != 1:
+                self.posx += potx
+    def update(self):
+        self.position = [self.posx * 30, self.posy * 30]
+        screen.blit(enemy,self.position)
 
 frogman = Player(5,5)
+badguy = Enemy(10,10)
 gamequit = 0
 
 def showmap(mapname):
@@ -94,16 +117,16 @@ def scoreboard():
     text = score.render("coins: %s" % (frogman.coin),0,(0,0,0))
     screen.blit(text,(500,10))
 
-pygame.mixer.music.load("room1.wav")
+pygame.mixer.music.load("title.wav")
 pygame.mixer.music.play(-1)
-
 while not gamequit:
-    clock.tick(30)
+    badguy.time += clock.tick(30)
     getinput()
     showmap(frogman.location.array)
     frogman.update()
+    badguy.move()
+    badguy.update()
     screen.blit(title,(0,360))
     screen.blit(gui,(480,0))
     scoreboard()
     pygame.display.flip()
-    
