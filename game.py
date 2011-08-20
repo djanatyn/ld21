@@ -8,10 +8,12 @@ clock = pygame.time.Clock()
 
 wall = pygame.image.load("wall.png")
 floor = pygame.image.load("floor.png")
+coin = pygame.image.load("coin.png")
 
 screen = pygame.display.set_mode(size,pygame.FULLSCREEN)
 
 bump = pygame.mixer.Sound("bump.wav")
+ping = pygame.mixer.Sound("coin.wav")
 
 pwalkfront = pygame.image.load("player_front.png")
 pwalkright = pygame.image.load("player_right.png")
@@ -25,8 +27,12 @@ class Player:
         self.position = [posx * 40, posy * 40]
         self.image = pwalkfront
         self.location = maps.testmap.array
+        self.coin = 0
     def update(self):
         self.position = [self.posx * 40, self.posy * 40]
+        if self.location[self.posy][self.posx] == 2:
+            ping.play()
+            self.location[self.posy][self.posx] = 0
         screen.blit(self.image,self.position)
     def run(self,event):
         potx = 0; poty = 0
@@ -54,6 +60,8 @@ def showmap(mapname):
             elif tile == 0:
               # print "floor at (%s,%s)" %  (row,column)
                 screen.blit(floor,[column * 40, row * 40])
+            elif tile == 2:
+                screen.blit(coin,[column * 40, row * 40])
             column += 1
         row += 1
 
@@ -64,7 +72,7 @@ def getinput():
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_ESCAPE: pygame.quit(); gamequit = 1
 
-pygame.mixer.music.load("title.wav")
+pygame.mixer.music.load("room1.wav")
 pygame.mixer.music.play(-1)
 while not gamequit:
     clock.tick(30)
